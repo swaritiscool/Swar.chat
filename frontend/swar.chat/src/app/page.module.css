@@ -43,11 +43,18 @@
 .banner {
   min-height: 80px;
   display: flex;
-  background-color: #ffffff;
+  background-color: rgb(238, 238, 238);
   width: 100%;
   padding: 20px;
   border-radius: 10px;
   margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.banner form {
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -166,16 +173,15 @@
 
 @media (max-width: 600px) {
   .page {
-    padding: 10px;
+    padding: 8px;
     padding-bottom: 20px;
   }
 
-  .main {
-    align-items: center;
+  .banner p {
+    font-size: 15px;
   }
-
-  .main ol {
-    text-align: center;
+  .banner input {
+    font-size: 13px;
   }
 
   .ctas {

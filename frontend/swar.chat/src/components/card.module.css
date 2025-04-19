@@ -1,27 +1,29 @@
 .UserCard {
   --primary: #cecece;
   background-color: var(--primary);
-  padding: 20px;
+  padding: 40px;
   margin: 10px;
   border-radius: 10px;
-  text-align: right;
-  max-width: 80%;
+  text-align: left;
+  max-width: 70%;
   width: auto;
   align-self: end;
-  line-height: 19px;
+  line-height: 32px;
+  overflow: wrap;
 }
 
 .AICard {
   --secondary: #f3f3f3;
   background-color: var(--secondary);
-  padding: 20px;
+  padding: 40px;
   margin: 10px;
   border-radius: 10px;
   text-align: left;
-  max-width: 80%;
+  max-width: 70%;
   width: auto;
   align-self: start;
   line-height: 32px;
+  overflow-x: scroll;
 }
 
 .AICard .model {
@@ -34,5 +36,81 @@
   }
   .AICard {
     --secondary: #141414;
+  }
+}
+
+.AICard h1,
+.AICard h2,
+.AICard h3 {
+  font-weight: bold;
+  font-size: 1.3em;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.AICard p {
+  margin: 12px 0;
+  line-height: 1.6;
+}
+.AICard sup {
+  font-size: 0.9em; /* Make the superscript smaller */
+  vertical-align: super; /* Align it properly as a superscript */
+  line-height: 0; /* Remove any extra line-height */
+  color: #555; /* Optional: Change the color if needed */
+}
+
+.AICard ol,
+.AICard ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.AICard li {
+  margin-bottom: 6px;
+}
+
+.AICard code {
+  font-family: "Courier New", monospace;
+  background-color: #f4f4f4;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.AICard blockquote {
+  border-left: 4px solid #aaa;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  font-style: italic;
+  margin: 16px 0;
+}
+
+.AICard hr {
+  border: 1px solid #ccc;
+  margin: 24px 0;
+}
+
+/* Styling for inline code and superscript */
+.AICard sup {
+  font-size: 0.9em;
+  vertical-align: super;
+  line-height: 0;
+}
+
+/* For dark mode styling */
+@media (prefers-color-scheme: dark) {
+  .AICard {
+    background-color: #141414;
+    color: #ccc;
+  }
+
+  .AICard code {
+    background-color: #2d2d2d;
+    color: #fff;
+  }
+
+  .AICard blockquote {
+    background-color: #222;
+    color: #ddd;
+    border-left: 4px solid #444;
   }
 }

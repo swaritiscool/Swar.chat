@@ -2,11 +2,22 @@ import { CircularProgress } from "@mui/material";
 import styles from "./card.module.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/felipec.css";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
+import Latex from "react-latex";
 
 export const UserCard = ({ content }) => {
   return (
     <div className={styles.UserCard}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeHighlight, rehypeKatex]}
+      >
+        {content}
+      </ReactMarkdown>
     </div>
   );
 };
@@ -19,7 +30,12 @@ export const AICard = ({ content, loaded, model }) => {
     </div>
   ) : (
     <div className={styles.AICard}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeHighlight, rehypeKatex]}
+      >
+        {content}
+      </ReactMarkdown>
       <p className={styles.model}>{model}</p>
     </div>
   );

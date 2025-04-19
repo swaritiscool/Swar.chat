@@ -3,7 +3,7 @@
 import styles from "./page.module.css";
 import { Poppins, Space_Mono } from "next/font/google";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Snackbar from "@mui/material/Snackbar";
 import { UserCard, AICard } from "@/components/card";
@@ -11,7 +11,7 @@ import Dropdown from "@mui/joy/Dropdown";
 import Menu from "@mui/joy/Menu";
 import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
-import { Alert } from "@mui/material";
+import { Alert, Input } from "@mui/material";
 import {
   ArrowCircleDown,
   ArrowDownward,
@@ -21,6 +21,7 @@ import {
   KeyboardReturn,
   Send,
 } from "@mui/icons-material";
+// const fs = require("fs");
 
 const spaceMono = Space_Mono({
   weight: "400",
@@ -30,10 +31,26 @@ const spaceMono = Space_Mono({
 export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
   const [thread, setThread] = useState([]);
-  const [model, setModel] = useState("granite3-moe");
   const [threadName, setThreadName] = useState("");
+  const [model, setModel] = useState("gemma3:1b");
+  const [api, setApi] = useState("http://localhost:8000/");
+  const [modelList, setModelList] = useState([]);
   const scroll_ref = useRef(null);
+
+  useEffect(() => {
+    console.log("doing");
+    const get = async () => {
+      const response = await fetch(api, {
+        method: "GET",
+      });
+      const data = await response.json();
+      console.log(data);
+      setModelList(data);
+    };
+    get();
+  }, []);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -41,6 +58,7 @@ export default function Home() {
     }
 
     setOpen(false);
+    setOpen2(false);
   };
 
   const handleSubmit = async (e) => {
@@ -52,14 +70,14 @@ export default function Home() {
     }
 
     const newMessage = {
-      id: uuidv4(),
+      id: uuidv4().slice(-8),
       role: "user",
       content: prompt,
       isLoaded: true,
     };
 
     const aiMsg = {
-      id: uuidv4(),
+      id: uuidv4().slice(-8),
       role: "bot",
       content: "",
       isLoaded: false,
@@ -69,21 +87,22 @@ export default function Home() {
     setThread((prev) => [...prev, newMessage, aiMsg]);
     setPrompt("");
 
+    const hist = [...thread];
+
+    console.log(hist);
+
     try {
-      const response = await fetch(
-        "https://4ddc-2401-4900-1c64-df59-2055-69b-10c4-4c2c.ngrok-free.app/chat/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: prompt,
-            history: [...thread.slice(-2), newMessage],
-            model: model,
-          }),
-        }
-      );
+      const response = await fetch(`${api}chat/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: prompt,
+          history: [...hist, newMessage],
+          model: model,
+        }),
+      });
 
       if (!response.ok) throw new Error("Request failed");
       if (!response.body) throw new Error("No response body");
@@ -139,25 +158,84 @@ export default function Home() {
     });
   }, [thread]);
 
+  const handleSave = (e) => {
+    e.preventDefault();
+
+    if (thread.length > 0 && threadName.length > 0) {
+      const threadData = JSON.stringify(thread, null, 2); // Pretty print
+      const blob = new Blob([threadData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${threadName}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else {
+      setOpen2(true);
+    }
+  };
+
+  const handleUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (Array.isArray(data)) {
+          setThread(data);
+        } else {
+          setOpen2(true); // You can customize this error for "Invalid format"
+          console.error("Invalid thread format");
+        }
+      } catch (err) {
+        setOpen2(true);
+        console.error("Error parsing JSON:", err);
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className={spaceMono.className}>
       <div className={styles.page}>
-        <div className={styles.banner}>
+        <div className={styles.banner} onSubmit={handleSave}>
+          <form>
+            <Input
+              type="text"
+              placeholder="Name of Thread..."
+              value={threadName}
+              onChange={(e) => {
+                e.target.value.length <= 20
+                  ? setThreadName(e.target.value)
+                  : null;
+              }}
+              color="secondary"
+            />
+            <button type="submit">
+              <div className={styles.buttondiv}>
+                <ArrowDownwardRounded /> Save Thread
+              </div>
+            </button>
+          </form>
           <input
-            type="text"
-            placeholder="Name of Thread..."
-            value={threadName}
+            value={api}
             onChange={(e) => {
-              e.target.value.length <= 20
-                ? setThreadName(e.target.value)
-                : null;
+              setApi(e.target.value);
             }}
+            style={{ width: "40%" }}
           />
-          <button>
-            <div className={styles.buttondiv}>
-              <ArrowDownwardRounded /> Download
-            </div>
-          </button>
+          <input
+            type="file"
+            accept=".json"
+            onChange={handleUpload}
+            placeholder="Upload File"
+            // style={{ marginLeft: "1rem" }}
+          />
         </div>
         <div className={styles.main}>
           {thread ? (
@@ -201,7 +279,7 @@ export default function Home() {
             }
             type="submit"
           >
-            <Send fontSize="large" />
+            <Send fontSize="medium" />
           </button>
           <div
             onClick={() =>
@@ -211,12 +289,19 @@ export default function Home() {
               })
             }
           >
-            <KeyboardDoubleArrowDown fontSize="large" />
+            <KeyboardDoubleArrowDown fontSize="medium" />
           </div>
           <Dropdown>
             <MenuButton variant="solid">{model}</MenuButton>
             <Menu variant="soft">
-              <MenuItem onClick={() => setModel("granite3-moe")}>
+              {modelList.map((m, id) => {
+                return (
+                  <MenuItem onClick={() => setModel(m)} key={id}>
+                    {m}
+                  </MenuItem>
+                );
+              })}
+              {/* <MenuItem onClick={() => setModel("granite3-moe")}>
                 Granite 3 Moe
               </MenuItem>
               <MenuItem onClick={() => setModel("TinyLlama")}>
@@ -224,7 +309,7 @@ export default function Home() {
               </MenuItem>
               <MenuItem onClick={() => setModel("gemma3:1b")}>
                 Gemma 3 1B
-              </MenuItem>
+              </MenuItem> */}
             </Menu>
           </Dropdown>
         </form>
@@ -236,6 +321,16 @@ export default function Home() {
             sx={{ width: "100%" }}
           >
             Please enter a prompt!
+          </Alert>
+        </Snackbar>
+        <Snackbar open={open2} autoHideDuration={3000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity="error"
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            Please send a message or make a name for the save file
           </Alert>
         </Snackbar>
       </div>
