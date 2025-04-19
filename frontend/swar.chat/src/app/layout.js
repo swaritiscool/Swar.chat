@@ -7,7 +7,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata = {
-  title: "Swa.chat",
+  title: "Swar.chat",
   description: "Made By Swarit Acharya",
 };
 

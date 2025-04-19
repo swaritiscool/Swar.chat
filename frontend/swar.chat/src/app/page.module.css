@@ -88,7 +88,7 @@
   background-color: var(--msg_box);
   outline: none;
   border: none;
-  font-family: "Poppins";
+  /* font-family: "Poppins"; */
   /* height: 100%; */
   width: 100%;
 }

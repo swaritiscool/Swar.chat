@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./page.module.css";
-import { Poppins } from "next/font/google";
+import { Poppins, Space_Mono } from "next/font/google";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -136,11 +136,11 @@ export default function Home() {
   };
 
   return (
-    <div className={poppins.className}>
+    <div className={spaceMono.className}>
       <div className={styles.page}>
         <div className={styles.banner}>
           <FormControl fullWidth>
-            <InputLabel>Age</InputLabel>
+            <InputLabel>Models</InputLabel>
             <Select value={model} label="Model" onChange={handleChange}>
               <MenuItem value={"granite3-moe"}>Granite 3 MOE</MenuItem>
               <MenuItem value={"gemma3:1b"}>Gemma 3 1B</MenuItem>
