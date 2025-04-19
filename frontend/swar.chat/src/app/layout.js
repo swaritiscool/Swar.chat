@@ -1,7 +1,7 @@
-import { Poppins } from "next/font/google";
+import { Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const poppins = Poppins({
+const spaceMono = Space_Mono({
   weight: "400",
   subsets: ["latin"],
 });
@@ -14,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={poppins.className}>{children}</body>
+      <body className={spaceMono.className}>{children}</body>
     </html>
   );
 }

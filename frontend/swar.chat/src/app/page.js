@@ -15,9 +15,8 @@ import {
 } from "@mui/material";
 import { UserCard, AICard } from "@/components/card";
 import { useInView } from "react-intersection-observer";
-import { Inventory } from "@mui/icons-material";
 
-const poppins = Poppins({
+const spaceMono = Space_Mono({
   weight: "400",
   subsets: ["latin"],
 });
