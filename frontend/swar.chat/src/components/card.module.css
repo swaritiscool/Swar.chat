@@ -1,0 +1,34 @@
+.UserCard {
+  --primary: #cecece;
+  background-color: var(--primary);
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  text-align: right;
+  max-width: 80%;
+  width: auto;
+  align-self: end;
+  line-height: 19px;
+}
+
+.AICard {
+  --secondary: #f3f3f3;
+  background-color: var(--secondary);
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  text-align: left;
+  max-width: 80%;
+  width: auto;
+  align-self: start;
+  line-height: 32px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .UserCard {
+    --primary: #222222;
+  }
+  .AICard {
+    --secondary: #141414;
+  }
+}
