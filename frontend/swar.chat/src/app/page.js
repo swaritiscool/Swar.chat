@@ -6,15 +6,21 @@ import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  Alert,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
 import { UserCard, AICard } from "@/components/card";
-import { useInView } from "react-intersection-observer";
+import Dropdown from "@mui/joy/Dropdown";
+import Menu from "@mui/joy/Menu";
+import MenuButton from "@mui/joy/MenuButton";
+import MenuItem from "@mui/joy/MenuItem";
+import { Alert } from "@mui/material";
+import {
+  ArrowCircleDown,
+  ArrowDownward,
+  ArrowDownwardOutlined,
+  ArrowDownwardRounded,
+  KeyboardDoubleArrowDown,
+  KeyboardReturn,
+  Send,
+} from "@mui/icons-material";
 
 const spaceMono = Space_Mono({
   weight: "400",
@@ -26,10 +32,8 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [thread, setThread] = useState([]);
   const [model, setModel] = useState("granite3-moe");
-  const [ref, inView, entry] = useInView({ threshold: 0.5 });
-  const scroll_ref = useRef();
-
-  console.log(inView);
+  const [threadName, setThreadName] = useState("");
+  const scroll_ref = useRef(null);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -38,15 +42,6 @@ export default function Home() {
 
     setOpen(false);
   };
-
-  useEffect(() => {
-    if (!inView) {
-      scroll_ref.current?.scrollTo({
-        top: scroll_ref.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [thread]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,6 +63,7 @@ export default function Home() {
       role: "bot",
       content: "",
       isLoaded: false,
+      model: model,
     };
 
     setThread((prev) => [...prev, newMessage, aiMsg]);
@@ -135,35 +131,51 @@ export default function Home() {
     setModel(event.target.value);
   };
 
+  useEffect(() => {
+    scroll_ref.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      // inline: "nearest",
+    });
+  }, [thread]);
+
   return (
     <div className={spaceMono.className}>
       <div className={styles.page}>
         <div className={styles.banner}>
-          <FormControl fullWidth>
-            <InputLabel>Models</InputLabel>
-            <Select value={model} label="Model" onChange={handleChange}>
-              <MenuItem value={"granite3-moe"}>Granite 3 MOE</MenuItem>
-              <MenuItem value={"gemma3:1b"}>Gemma 3 1B</MenuItem>
-              <MenuItem value={"llama3.1"}>Llama 3.1 8B</MenuItem>
-            </Select>
-          </FormControl>
+          <input
+            type="text"
+            placeholder="Name of Thread..."
+            value={threadName}
+            onChange={(e) => {
+              e.target.value.length <= 20
+                ? setThreadName(e.target.value)
+                : null;
+            }}
+          />
+          <button>
+            <div className={styles.buttondiv}>
+              <ArrowDownwardRounded /> Download
+            </div>
+          </button>
         </div>
-        <div className={styles.main} ref={scroll_ref}>
+        <div className={styles.main}>
           {thread ? (
             thread.map((m, index) => (
-              <div key={m.id} className={styles.cards} ref={ref}>
+              <div key={m.id} className={styles.cards}>
                 {m.role === "user" ? (
                   <UserCard content={m.content} />
                 ) : m.isLoaded === true ? (
-                  <AICard content={m.content} />
+                  <AICard model={m.model} content={m.content} />
                 ) : (
-                  <AICard content={m.content} loaded={false} />
+                  <AICard model={m.model} content={m.content} loaded={false} />
                 )}
               </div>
             ))
           ) : (
             <></>
           )}
+          <div ref={scroll_ref} />
         </div>
         <form className={styles.messageBox} onSubmit={handleSubmit}>
           <textarea
@@ -187,9 +199,34 @@ export default function Home() {
             disabled={
               thread.length !== 0 ? !thread[thread.length - 1].isLoaded : false
             }
+            type="submit"
           >
-            <ArrowCircleUpIcon fontSize="large" />
+            <Send fontSize="large" />
           </button>
+          <div
+            onClick={() =>
+              scroll_ref.current.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+          >
+            <KeyboardDoubleArrowDown fontSize="large" />
+          </div>
+          <Dropdown>
+            <MenuButton variant="solid">{model}</MenuButton>
+            <Menu variant="soft">
+              <MenuItem onClick={() => setModel("granite3-moe")}>
+                Granite 3 Moe
+              </MenuItem>
+              <MenuItem onClick={() => setModel("TinyLlama")}>
+                TinyLlama
+              </MenuItem>
+              <MenuItem onClick={() => setModel("gemma3:1b")}>
+                Gemma 3 1B
+              </MenuItem>
+            </Menu>
+          </Dropdown>
         </form>
         <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
           <Alert

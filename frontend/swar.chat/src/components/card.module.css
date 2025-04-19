@@ -24,6 +24,10 @@
   line-height: 32px;
 }
 
+.AICard .model {
+  color: #555;
+}
+
 @media (prefers-color-scheme: dark) {
   .UserCard {
     --primary: #222222;

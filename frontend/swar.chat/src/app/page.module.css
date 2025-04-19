@@ -42,11 +42,40 @@
 
 .banner {
   min-height: 80px;
+  display: flex;
   background-color: #ffffff;
   width: 100%;
   padding: 20px;
   border-radius: 10px;
   margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner input {
+  height: 100%;
+  width: 200px;
+  font-family: "Space Mono", monospace;
+  outline: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+  border: none;
+}
+
+.banner button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.banner button .buttondiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Space Mono", monospace;
 }
 
 .cards {
@@ -71,7 +100,7 @@
   padding-bottom: 0px;
   position: absolute;
   bottom: 0;
-  margin-bottom: 15px;
+  gap: 10px;
   box-shadow: #ffffff23 3px 3px 60px 10px;
 }
 
@@ -100,6 +129,14 @@
   transition: 150ms ease;
 }
 .messageBox button:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+.messageBox div {
+  transition: 150ms ease;
+}
+
+.messageBox div:hover {
   transform: translateY(-5px);
   cursor: pointer;
 }

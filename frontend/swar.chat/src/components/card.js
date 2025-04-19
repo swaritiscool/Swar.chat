@@ -11,14 +11,16 @@ export const UserCard = ({ content }) => {
   );
 };
 
-export const AICard = ({ content, loaded }) => {
+export const AICard = ({ content, loaded, model }) => {
   return loaded === false ? (
     <div className={styles.AICard}>
       <CircularProgress size="30px" />
+      <p className={styles.model}>{model}</p>
     </div>
   ) : (
     <div className={styles.AICard}>
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <p className={styles.model}>{model}</p>
     </div>
   );
 };
