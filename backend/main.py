@@ -25,6 +25,7 @@ async def chat(request: Request):
     prompt = body["message"]
     chat_hist = body["history"]
     model = body["model"]
+    system_prompt = body["system_prmpt"]
 
     """
     hist = [
@@ -38,16 +39,23 @@ async def chat(request: Request):
     ]
     """
 
-    chat_history = "\n".join(f"{msg['role']} (using {model}): {msg['content']}" for msg in chat_hist)
-    
+    if len(chat_hist) >= 2:
+        chat_history = "\n".join(f"{msg['role']} (using {model}): {msg['content']}" for msg in chat_hist)
+        # Corrected message roles — only valid ones are used
+        messages = [
+            {"role": "system", "content": f"{system_prompt}. Provided is chat history. Here is the chat history: {chat_history}"},
+            {"role": "user", "content": prompt}
+        ]
+    else:
+        chat_history = ""
+        # Corrected message roles — only valid ones are used
+        messages = [
+            {"role": "system", "content": f"{system_prompt}."},
+            {"role": "user", "content": prompt}
+        ]
 
     print(chat_history)
 
-    # Corrected message roles — only valid ones are used
-    messages = [
-        {"role": "system", "content": f"You are a helpful assistant who gives to the point answers. Provided is chat history. Don't let it influence your answer, just to provide more information. Here is the chat history: {chat_history}"},
-        {"role": "user", "content": prompt}
-    ]
 
     def generate():
         stream = ollama.chat(

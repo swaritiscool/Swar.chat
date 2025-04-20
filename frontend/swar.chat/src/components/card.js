@@ -7,7 +7,6 @@ import "highlight.js/styles/felipec.css";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
-import Latex from "react-latex";
 
 export const UserCard = ({ content }) => {
   return (

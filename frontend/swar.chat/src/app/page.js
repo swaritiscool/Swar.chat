@@ -11,7 +11,7 @@ import Dropdown from "@mui/joy/Dropdown";
 import Menu from "@mui/joy/Menu";
 import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
-import { Alert, Input } from "@mui/material";
+import { Alert, Input, Switch } from "@mui/material";
 import {
   ArrowCircleDown,
   ArrowDownward,
@@ -33,10 +33,15 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [thread, setThread] = useState([]);
-  const [threadName, setThreadName] = useState("");
+  const [threadName, setThreadName] = useState("Thread Name");
+  const [systemPrompt, setSystemPrompt] = useState(
+    "You are a helpful assistant"
+  );
+  const [checked, setChecked] = useState();
   const [model, setModel] = useState("gemma3:1b");
   const [api, setApi] = useState("http://localhost:8000/");
   const [modelList, setModelList] = useState([]);
+  const [hist, setHist] = useState([]);
   const scroll_ref = useRef(null);
 
   useEffect(() => {
@@ -50,7 +55,7 @@ export default function Home() {
       setModelList(data);
     };
     get();
-  }, []);
+  }, [api]);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -84,12 +89,18 @@ export default function Home() {
       model: model,
     };
 
+    if (api === "") {
+      return;
+    }
+
     setThread((prev) => [...prev, newMessage, aiMsg]);
     setPrompt("");
 
-    const hist = [...thread];
-
-    console.log(hist);
+    if (checked) {
+      setHist([...thread, newMessage]);
+    } else {
+      setHist([1]);
+    }
 
     try {
       const response = await fetch(`${api}chat/`, {
@@ -99,8 +110,9 @@ export default function Home() {
         },
         body: JSON.stringify({
           message: prompt,
-          history: [...hist, newMessage],
+          history: [...hist],
           model: model,
+          system_prmpt: systemPrompt,
         }),
       });
 
@@ -200,6 +212,10 @@ export default function Home() {
     reader.readAsText(file);
   };
 
+  const handleEnable = (event) => {
+    setChecked(event.target.checked);
+  };
+
   return (
     <div className={spaceMono.className}>
       <div className={styles.page}>
@@ -230,12 +246,21 @@ export default function Home() {
             style={{ width: "40%" }}
           />
           <input
+            value={systemPrompt}
+            onChange={(e) => {
+              setSystemPrompt(e.target.value);
+            }}
+            style={{ width: "40%" }}
+          />
+          <input
             type="file"
             accept=".json"
             onChange={handleUpload}
             placeholder="Upload File"
             // style={{ marginLeft: "1rem" }}
           />
+          <Switch defaultChecked color="secondary" onChange={handleEnable} />
+          <p style={{ color: "#000" }}>Enable Chat Hisotry</p>
         </div>
         <div className={styles.main}>
           {thread ? (
