@@ -30,6 +30,23 @@
   color: #555;
 }
 
+.details {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.copy {
+  transition: 200ms ease;
+  padding: 3px;
+}
+
+.details .copy:hover {
+  cursor: pointer;
+  transform: translateY(-5px);
+}
+
 @media (prefers-color-scheme: dark) {
   .UserCard {
     --primary: #222222;
