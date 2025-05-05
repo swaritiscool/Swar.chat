@@ -1,1 +1,1 @@
-Front end made with Next.JS (because I wanted to learn it)
+Front end made with Next.JS only because I wanted to learn it :)
